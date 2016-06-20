@@ -1,6 +1,31 @@
-*{
-	border: 1px navy solid;
+html { 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center center; 
+  /*overflow: hidden;*/
+  background-image: url(images/above-adventure-aerial-air.jpg);
+
 }
+
+#weather{
+	/*background-image: url(images/above-adventure-aerial-air.jpg);*/
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	color: snow;
+}
+
+#location{
+	font-family: Nunito;
+	font-weight: 500;
+	font-size: 3em;
+}
+
 #int-temp{
 	display: relative;
 }
@@ -11,6 +36,51 @@
 	top: 0;
 }
 
+#forecast{
+	display: flex;
+	align-items: center;
+	margin: 1em;
+	border-top: 2px solid snow;
+}
+
+#forecast-daily{
+	display: flex;
+	flex-direction: column;
+	font-size: 0.8em;
+	color: snow;
+}
+
+.daily-temp{
+	display: flex;
+	border-bottom: 2px solid #FFDC00
+}
+
+.day{
+	font-size: 2em;
+	text-align: center;
+	width: 10%;
+	margin: 5%;
+}
+.daily-summary{
+	width: 80%;
+	align-self: center;
+}
+
+.min-max{
+	align-self: center;
+	width: 20%;
+	padding-left: 1%
+}
+#current-temp{
+	border-right: 1px solid #ddd;
+	padding-right: 1em;
+	font-size: 2em;
+}
+
+#summary{
+	margin-left: 1em;
+	font-size: 2em;
+}
 
 sup {
 	font-size: 0.5em;

@@ -5,21 +5,7 @@ var geocodingToken = 'AIzaSyDovPpSrjdsWZWpqKG8tWI6_ipxXkxro6k'
 var geocodingURL = 'https://maps.googleapis.com/maps/api/geocode/json?address='
 
 // animated icons
-// var skycons = new Skycons({"color": "#FFDC00"}),
-//           list  = [
-//             "clear-day", "clear-night", "partly-cloudy-day",
-//             "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-//             "fog"
-//           ],
-//           i;
-//       for(i = list.length; i--; )
-//         skycons.set(list[i], list[i]);
-//       skycons.play();
-
-var skycons = new Skycons({"color": "pink"});
-  	skycons.add("icon1", Skycons.PARTLY_CLOUDY_DAY);
-    skycons.add(document.getElementById("icon2"), Skycons.RAIN);
-
+var skycons = new Skycons({"color": "snow"});
   	skycons.play()
 
 console.log(skycons.icon1)
@@ -27,8 +13,11 @@ console.log(skycons.icon1)
 var buttonNode = document.querySelector('#nav-bar')
 var locationNode = document.querySelector('#location')
 var forecastNode = document.querySelector('#forecast')
+var forecastDailyNode = document.querySelector('#forecast-daily')
+var summaryNode = document.querySelector('#summary')
 var alertsNode = document.querySelector('#alerts')
 var searchNode = document.querySelector('#search')
+var iconNode = document.querySelector('#weather-icon')
 
 var changeViewType = function(eventObj){
 	console.log(eventObj.target.value)
@@ -116,6 +105,7 @@ function formatAMPM(date) {
 var renderCurrentView = function(apiResponse){
 	console.log(apiResponse)
 	var temp = apiResponse.currently.temperature
+	var summary = apiResponse.currently.summary
 	if(apiResponse.alerts !== undefined){
 		var alertTitle = apiResponse.alerts[0].title
 		var alertDesc = apiResponse.alerts[0].description
@@ -124,19 +114,24 @@ var renderCurrentView = function(apiResponse){
 	}
 	
 	var tempInnerHTML = '',
-		alertsInnerHTML = ''
+		alertsInnerHTML = '',
+		backgroundClass = ''
+	if(apiResponse.currently.summary === "Partly Cloudy"){
+		backgroundClass = 'partly-cloudy'
+	}
+	tempInnerHTML += '<div id="current-temp" class="' + backgroundClass +'">' + parseInt(temp) + '&deg<sup>F</sup></div>'
+	tempInnerHTML += '<div id="summary">' + summary + '</div>'
 
-	tempInnerHTML += '<div id="current-temp">' + parseInt(temp) + '&deg<sup>F</sup></div>'
-	
-
-	
+	iconNode.innerHTML = '<canvas id="' + apiResponse.currently.icon + '" width="50" height="50"></canvas>'
 	forecastNode.innerHTML = tempInnerHTML
 	alertsNode.innerHTML = alertsInnerHTML
-	locationNode.innerHTML = '<h2>' + searchedObj.name + '</h2>'
+	locationNode.innerHTML = searchedObj.name
+	createIcon()
 }
 
 var renderDailyView = function(apiResponse){
 	console.log(apiResponse)
+	forecastNode.innerHTML = ''
 	alertsNode.innerHTML = ''
 	var dayArr = apiResponse.daily.data
 	var tempInnerHTML = ''
@@ -155,7 +150,7 @@ var renderDailyView = function(apiResponse){
 		 tempInnerHTML += 	'<div class="min-max">' + parseInt(tempMin) + '&deg<sup>F</sup> / ' + parseInt(tempMax) + '&deg<sup>F</sup>' + '</div>'
 		 tempInnerHTML += '</div>'
 	}
-	forecastNode.innerHTML = tempInnerHTML
+	forecastDailyNode.innerHTML = tempInnerHTML
 }
 
 var renderHourlyView = function(apiResponse){
@@ -174,12 +169,13 @@ var renderHourlyView = function(apiResponse){
 
 		tempInnerHTML += '<div class="hourly-temp">'
 		tempInnerHTML += 	'<div class="time">'+ hourStr + '</div>'
-		tempInnerHTML +=	'<div class="temp">' + parseInt(temp) + '&deg<sup>F</sup>'
-		tempInnerHTML +=	'<div class="feels-like">' + parseInt(feelsLike) + '&deg<sup>F</sup>'
-		tempInnerHTML +=	'<div class="hourly-summary">' + '<canvas id="icon1" width="50" height="50"></canvas>' + summary + '</div>' 
+		tempInnerHTML +=	'<div class="temp">' + parseInt(temp) + '&deg<sup>F</sup></div>'
+		tempInnerHTML +=	'<div class="feels-like">' + parseInt(feelsLike) + '&deg<sup>F</sup></div>'
+		tempInnerHTML +=	'<div class="hourly-summary"><canvas id="' + hour.icon + '" width="50" height="50"></canvas>' + summary + '</div>' 
 		tempInnerHTML += '</div>'
 	}
-	forecastNode.innerHTML = '<canvas id="icon1" width="50" height="50"></canvas>'
+	forecastNode.innerHTML = tempInnerHTML
+	createIcon()
 }
 //define viewtypes ends
 
@@ -203,8 +199,16 @@ var controller = function (){
 
 
 }
-
-// controller()
+var createIcon = function(){
+var list  = [
+            "clear-day", "clear-night", "partly-cloudy-day",
+            "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
+            "fog"
+          ],
+          i;
+      for(i = list.length; i--; )
+        skycons.set(list[i], list[i]);
+}
 
 window.addEventListener('hashchange',controller)
 buttonNode.addEventListener('click', changeViewType)
