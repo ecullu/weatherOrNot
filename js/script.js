@@ -14,6 +14,7 @@ var buttonNode = document.querySelector('#nav-bar')
 var locationNode = document.querySelector('#location')
 var forecastNode = document.querySelector('#forecast')
 var forecastDailyNode = document.querySelector('#forecast-daily')
+var forecastHourlyNode = document.querySelector('#forecast-hourly')
 var summaryNode = document.querySelector('#summary')
 var alertsNode = document.querySelector('#alerts')
 var searchNode = document.querySelector('#search')
@@ -104,6 +105,9 @@ function formatAMPM(date) {
 // define viewtypes
 var renderCurrentView = function(apiResponse){
 	console.log(apiResponse)
+	forecastDailyNode.innerHTML = ''
+	forecastHourlyNode.innerHTML = ''
+
 	var temp = apiResponse.currently.temperature
 	var summary = apiResponse.currently.summary
 	if(apiResponse.alerts !== undefined){
@@ -132,6 +136,7 @@ var renderCurrentView = function(apiResponse){
 var renderDailyView = function(apiResponse){
 	console.log(apiResponse)
 	forecastNode.innerHTML = ''
+	forecastHourlyNode.innerHTML = ''
 	alertsNode.innerHTML = ''
 	var dayArr = apiResponse.daily.data
 	var tempInnerHTML = ''
@@ -155,9 +160,19 @@ var renderDailyView = function(apiResponse){
 
 var renderHourlyView = function(apiResponse){
 	console.log(apiResponse)
+	forecastNode.innerHTML = ''
+	forecastDailyNode.innerHTML = ''
+	var tempInnerHTML = ''
+		tempInnerHTML += '<div class="hourly-temp-title">'
+		tempInnerHTML += 	'<div class="time">Time</div>'
+		tempInnerHTML +=	'<div class="temp">Temp</div>'
+		tempInnerHTML +=	'<div class="feels-like">Feels</div>'
+		tempInnerHTML +=	'<div class="hourly-summary">Summary</div>' 
+		tempInnerHTML +=	'<div class="hourly-precip">Precip</div>' 
+		tempInnerHTML += '</div>'
+
 	alertsNode.innerHTML = ''
 	var hourArr = apiResponse.hourly.data
-	var tempInnerHTML = ''
 	for (var i = 0; i < hourArr.length; i++){
 		var hour = hourArr[i]
 		var d = new Date(hour.time * 1000)
@@ -165,6 +180,7 @@ var renderHourlyView = function(apiResponse){
 		var temp = hour.temperature
 		var summary = hour.summary
 		var feelsLike = hour.apparentTemperature
+		var precip = hour.precipProbability * 100
 		console.log(hour.icon)
 
 		tempInnerHTML += '<div class="hourly-temp">'
@@ -172,33 +188,38 @@ var renderHourlyView = function(apiResponse){
 		tempInnerHTML +=	'<div class="temp">' + parseInt(temp) + '&deg<sup>F</sup></div>'
 		tempInnerHTML +=	'<div class="feels-like">' + parseInt(feelsLike) + '&deg<sup>F</sup></div>'
 		tempInnerHTML +=	'<div class="hourly-summary"><canvas id="' + hour.icon + '" width="50" height="50"></canvas>' + summary + '</div>' 
+		tempInnerHTML +=	'<div class="hourly-precip"> <i class="fa fa-tint" aria-hidden="true"></i>' + " "+ parseInt(precip) + "%" + '</div>'
 		tempInnerHTML += '</div>'
 	}
-	forecastNode.innerHTML = tempInnerHTML
+	forecastHourlyNode.innerHTML = tempInnerHTML
 	createIcon()
 }
 //define viewtypes ends
 
 
-var controller = function (){
-	console.log(fetchData(hashToObject().lat,hashToObject().lng))
+var weatherPromise = fetchData(hashToObject().lat,hashToObject().lng)
 
-	var currentView =  hashToObject().viewtype
-	var weatherPromise = fetchData(hashToObject().lat,hashToObject().lng)
-	if (currentView === 'current') {
-        weatherPromise.then(renderCurrentView)
-    }
+//router
+var ForecastRouter = Backbone.Router.extend({
+	routes:{
+		":lat/:lng/current": "showCurrentWeather",
+		":lat/:lng/daily": "showDailyWeather",
+		":lat/:lng/hourly": "showHourlyWeather"
+	},
 
-    else if (currentView === 'daily') {
-        weatherPromise.then(renderDailyView)
-    }
+	showCurrentWeather: function(){
+		weatherPromise.then(renderCurrentView)
+	},
 
-    else if (currentView === 'hourly') {
-        weatherPromise.then(renderHourlyView)
-    }
+	showDailyWeather: function(){
+		weatherPromise.then(renderDailyView)
+	},
 
+	showHourlyWeather: function(){
+		weatherPromise.then(renderHourlyView)
+	}
+})
 
-}
 var createIcon = function(){
 var list  = [
             "clear-day", "clear-night", "partly-cloudy-day",
@@ -210,7 +231,9 @@ var list  = [
         skycons.set(list[i], list[i]);
 }
 
-window.addEventListener('hashchange',controller)
+var rtr = new ForecastRouter()
+Backbone.history.start()
+
 buttonNode.addEventListener('click', changeViewType)
 searchNode.addEventListener('keydown', getSearchCoords)
 

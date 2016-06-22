@@ -1,3 +1,7 @@
+
+*{
+	box-sizing: border-box;
+}
 html { 
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -10,9 +14,42 @@ html {
   background-image: url(images/above-adventure-aerial-air.jpg);
 
 }
+#search-bar{
+	width: 50%;
+	margin: auto; 
+}
+
+::-webkit-input-placeholder {
+   color: snow;
+	text-align: center;
+	font-style: italic;
+}
+#search-bar > input{
+	width: 50%;
+	height: 3em;
+	background: transparent;
+	margin: 2em 25%;
+	border: 2px groove #ddd;	
+}
+
+#nav-bar{
+	display: flex;
+	width: 50%;
+	margin: auto;
+	justify-content: space-around;
+	padding: 1em;
+}
+
+#nav-bar > *{
+	background: #ddd;
+	padding: 1em;
+	border: 0px;
+	border-bottom: 1px solid snow;
+	border-radius: 0.2em;
+	letter-spacing: 0.2em;
+}
 
 #weather{
-	/*background-image: url(images/above-adventure-aerial-air.jpg);*/
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
@@ -43,16 +80,60 @@ html {
 	border-top: 2px solid snow;
 }
 
-#forecast-daily{
+#forecast-daily, #forecast-hourly{
 	display: flex;
 	flex-direction: column;
 	font-size: 0.8em;
 	color: snow;
+	background-color: rgba(221, 221, 221, 0.3);
+	border-radius: 1em;
+	max-width: 800px;
+	width:70%
 }
 
+#forecast-hourly{
+	width: 100%;
+	max-width:800px;
+}
+
+.hourly-temp-title{
+	display: flex;
+	text-align: center;
+	margin: 0.5em 0;
+	padding-bottom: 0.2em;
+	font-size: 1.5em;
+	font-weight: bolder;
+	letter-spacing: 0.1em;
+	color: #FFDC00;
+	border-bottom: 1px solid #ddd;
+}
+
+.hourly-temp{
+	display: flex;
+	text-align: center;
+	align-items: center;
+}
+.hourly-temp:nth-child(even){
+	background-color: rgba(221, 221, 221, 0.2);
+}
+
+.hourly-temp > div{
+	width: 20%;
+	text-align: center;
+	font-weight: 600;
+}
+
+
+.hourly-temp-title > div{
+	width: 20%;
+}
 .daily-temp{
 	display: flex;
 	border-bottom: 2px solid #FFDC00
+}
+
+.daily-temp:last-child{
+	border-bottom: none;
 }
 
 .day{
@@ -60,16 +141,23 @@ html {
 	text-align: center;
 	width: 10%;
 	margin: 5%;
+	font-weight: 600
 }
 .daily-summary{
 	width: 80%;
 	align-self: center;
+	font-size: 1.3em;
+	text-align: center;
 }
 
 .min-max{
 	align-self: center;
 	width: 20%;
-	padding-left: 1%
+	padding-left: 1%;
+	padding-right: 2%;
+	font-size: 1.5em;
+	color: snow;
+	font-weight: bolder
 }
 #current-temp{
 	border-right: 1px solid #ddd;
