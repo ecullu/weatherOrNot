@@ -53,13 +53,13 @@ var searchedObj = {
 }
 
 var showSearchedCity = function(eventObj){
-	console.log(eventObj)
 	console.log(eventObj.results[0].geometry.location)
 	var inputLat = eventObj.results[0].geometry.location.lat
 	var inputLng = eventObj.results[0].geometry.location.lng
 	location.hash = inputLat + "/" + inputLng + '/current' 
-	console.log(location.hash)
+	console.log('location hash >>>' + location.hash)
 	hashToObject()
+	console.log('updated hashobject', hashToObject())
 	var formattedAddress = eventObj.results[0].formatted_address.split(",")
 	inputLocationName = formattedAddress[0]
 	searchedObj.name = inputLocationName
@@ -91,7 +91,7 @@ var locationReader = function(geoPos){
 
 navigator.geolocation.getCurrentPosition(locationReader)
 
-function formatAMPM(date) {
+var formatAMPM = function(date) {
   var hours = date.getHours();
   var minutes = date.getMinutes();
   var ampm = hours >= 12 ? 'PM' : 'AM';
@@ -197,9 +197,8 @@ var renderHourlyView = function(apiResponse){
 //define viewtypes ends
 
 
-var weatherPromise = fetchData(hashToObject().lat,hashToObject().lng)
 
-//router
+//backbone router
 var ForecastRouter = Backbone.Router.extend({
 	routes:{
 		":lat/:lng/current": "showCurrentWeather",
@@ -208,14 +207,17 @@ var ForecastRouter = Backbone.Router.extend({
 	},
 
 	showCurrentWeather: function(){
+		var weatherPromise = fetchData(hashToObject().lat,hashToObject().lng)
 		weatherPromise.then(renderCurrentView)
 	},
 
 	showDailyWeather: function(){
+		var weatherPromise = fetchData(hashToObject().lat,hashToObject().lng)
 		weatherPromise.then(renderDailyView)
 	},
 
 	showHourlyWeather: function(){
+		var weatherPromise = fetchData(hashToObject().lat,hashToObject().lng)
 		weatherPromise.then(renderHourlyView)
 	}
 })
