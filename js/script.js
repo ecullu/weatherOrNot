@@ -2,7 +2,7 @@ var token = '7eaad08a23202300a5e89c7db0782705'
 var forecastURL = 'https://api.forecast.io/forecast/'
 
 var geocodingToken = 'AIzaSyDovPpSrjdsWZWpqKG8tWI6_ipxXkxro6k'
-var geocodingURL = 'https://maps.googleapis.com/maps/api/geocode/json?address='
+var geocodingURL = 'https://maps.googleapis.com/maps/api/geocode/json?address=?'
 
 // animated icons
 var skycons = new Skycons({"color": "snow"});
