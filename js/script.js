@@ -33,7 +33,7 @@ var fetchData = function(lat,lng){
 }
 
 var fetchLocationData = function(address){
-	var locationURL = geocodingURL + address + '&' + geocodingToken
+	var locationURL = geocodingURL + address + '&key=' + geocodingToken
 	var locationPromise = $.getJSON(locationURL)
 	return locationPromise
 }
@@ -187,12 +187,13 @@ var renderHourlyView = function(apiResponse){
 		tempInnerHTML += 	'<div class="time">'+ hourStr + '</div>'
 		tempInnerHTML +=	'<div class="temp">' + parseInt(temp) + '&deg<sup>F</sup></div>'
 		tempInnerHTML +=	'<div class="feels-like">' + parseInt(feelsLike) + '&deg<sup>F</sup></div>'
-		tempInnerHTML +=	'<div class="hourly-summary"><canvas id="' + hour.icon + '" width="50" height="50"></canvas>' + summary + '</div>' 
+		tempInnerHTML +=	'<div class="hourly-summary"><canvas class="' + hour.icon + '" width="50" height="50"></canvas>' + summary + '</div>' 
 		tempInnerHTML +=	'<div class="hourly-precip"> <i class="fa fa-tint" aria-hidden="true"></i>' + " "+ parseInt(precip) + "%" + '</div>'
 		tempInnerHTML += '</div>'
 	}
 	forecastHourlyNode.innerHTML = tempInnerHTML
 	createIcon()
+	console.log('skycons>>>' + skycons)
 }
 //define viewtypes ends
 
@@ -229,8 +230,14 @@ var list  = [
             "fog"
           ],
           i;
-      for(i = list.length; i--; )
-        skycons.set(list[i], list[i]);
+      for(i = list.length; i--; ){
+      	var weatherType = list[i],
+        elements = document.getElementsByClassName( weatherType )
+        for (e = elements.length; e--;){
+        skycons.set(elements[e], weatherType)
+	    }
+      }
+        // skycons.set(list[i], list[i]);
 }
 
 var rtr = new ForecastRouter()
